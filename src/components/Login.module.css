@@ -1,0 +1,21 @@
+.formContainer {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+.loginForm {
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  width: 400px;
+  padding: 40px 40px 30px 40px;
+  margin-top: 12%;
+}
+.loginFormButton {
+  width: 100%;
+}
+.forgotSection {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 15px;
+}
