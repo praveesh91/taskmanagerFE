@@ -1,17 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Layout, Menu, Breadcrumb, message } from "antd";
-import { useHistory } from "react-router-dom";
+import React, { useContext } from "react";
+import { Layout, Menu, message } from "antd";
+import { useHistory, useLocation } from "react-router-dom";
 import customInterceptors from "../api/index";
 import AuthContext from "./AuthContext";
 
-import Login from "./Login";
-
-const { Header, Content, Footer } = Layout;
+const { Header } = Layout;
 
 const HeaderLayout = ({ children }) => {
   const history = useHistory();
+  const location = useLocation();
+  const path = location.pathname.split("/")[1];
   const context = useContext(AuthContext);
-  console.log({ context });
 
   const handleSignout = async () => {
     try {
@@ -36,14 +35,16 @@ const HeaderLayout = ({ children }) => {
       }}>
       <div>
         <div className="logo" />
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
-          <Menu.Item key="1" onClick={() => history.push("/profile")}>
+        <Menu theme="dark" mode="horizontal" selectedKeys={[path]}>
+          <Menu.Item key="profile" onClick={() => history.push("/profile")}>
             Home
           </Menu.Item>
-          <Menu.Item key="2" onClick={() => history.push("/tasks")}>
+          <Menu.Item key="tasks" onClick={() => history.push("/tasks")}>
             Tasks
           </Menu.Item>
-          <Menu.Item key="3">nav 3</Menu.Item>
+          <Menu.Item key="users" onClick={() => history.push("/users")}>
+            Users
+          </Menu.Item>
         </Menu>
       </div>
       <div className="signout">

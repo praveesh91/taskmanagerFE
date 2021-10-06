@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import HeaderLayout from "./HeaderLayout";
+import FooterLayout from "./FooterLayout";
 import customInterceptors from "../api/index";
 import { useHistory, useLocation } from "react-router-dom";
-
+import moment from "moment";
 import { ClockCircleOutlined, CheckOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -14,18 +16,22 @@ import {
   message,
   Timeline,
   Layout,
-  Menu,
+  Card,
 } from "antd";
 
 const { TextArea } = Input;
-const { Header, Content, Footer } = Layout;
+const { Content } = Layout;
 
 function Tasks() {
   const history = useHistory();
   const location = useLocation();
   const path = location.pathname.split("/")[1];
+  const [form] = Form.useForm();
+  const checkboxRef = useRef();
 
   const [tasks, setTasks] = useState([]);
+  const [taskById, setTaskById] = useState();
+  const [edit, setEdit] = useState(false);
   const [reload, setReload] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -35,12 +41,23 @@ function Tasks() {
     return () => {};
   }, [reload]);
 
-  const showModal = () => {
+  const showModal = (id, action) => {
+    console.log(id);
+    action === "edit" && getTaskById(id);
+    action === "create" &&
+      form.setFieldsValue({
+        name: "",
+        time: "",
+        description: "",
+      });
+    action === "create" && (checkboxRef.current.state.checked = false);
+
     setIsModalVisible(true);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setEdit(false);
   };
 
   const getTasks = async () => {
@@ -49,6 +66,22 @@ function Tasks() {
       setTasks(res.data);
     } catch (error) {
       console.log(error);
+    }
+  };
+  const getTaskById = async (id) => {
+    try {
+      const { data } = await customInterceptors.get(`/task/${id}`);
+      console.log(data);
+      setTaskById(data);
+      form.setFieldsValue({
+        name: data?.name,
+        time: data?.time,
+        description: data?.description,
+      });
+      checkboxRef.current.state.checked = data?.completed;
+      setEdit(true);
+    } catch (error) {
+      message.error("Unable to fetch the selected task details");
     }
   };
 
@@ -64,75 +97,76 @@ function Tasks() {
     }
   };
 
-  const handleSignout = async () => {
+  const onFinishEdit = async (values) => {
     try {
-      const res = await customInterceptors.post("/users/logout");
-      message.success("Logged out successfully");
-      localStorage.clear();
-      history.push("/");
+      values.completed = completed;
+      const res = await customInterceptors.patch(
+        `/task/${taskById._id}`,
+        values
+      );
+      setIsModalVisible(false);
+      setReload(!reload);
+      message.success("Task updated successfully");
     } catch (error) {
-      console.log(error);
+      message.error("Unable to update the task");
     }
   };
-
   return (
     <Layout>
-      <Header
-        style={{
-          position: "fixed",
-          zIndex: 1,
-          width: "100%",
-          display: "flex",
-          justifyContent: "space-between",
-        }}>
-        <div>
-          <div className="logo" />
-          <Menu theme="dark" mode="horizontal" selectedKeys={[path]}>
-            <Menu.Item key="profile" onClick={() => history.push("/profile")}>
-              Home
-            </Menu.Item>
-            <Menu.Item key="tasks" onClick={() => history.push("/tasks")}>
-              Tasks
-            </Menu.Item>
-            <Menu.Item key="3">nav 3</Menu.Item>
-          </Menu>
-        </div>
-        <div className="signout">
-          <Menu theme="dark" mode="horizontal">
-            <Menu.Item key="4" onClick={handleSignout}>
-              Signout
-            </Menu.Item>
-          </Menu>
-        </div>
-      </Header>
+      <HeaderLayout />
       <Content
         className="site-layout"
-        style={{ padding: "0 50px", marginTop: 64 }}>
+        style={{ padding: "20px 50px", marginTop: 64 }}>
         <div
           className="site-layout-background"
           style={{ padding: 24, minHeight: 380 }}>
           <div>
-            <Timeline>
-              {tasks.map((e) => (
-                <Timeline.Item
-                  key={e.name}
-                  dot={
-                    e.completed ? (
-                      <CheckOutlined style={{ color: "green" }} />
-                    ) : (
-                      <ClockCircleOutlined style={{ color: "red" }} />
-                    )
-                  }>
-                  {`${e.name} was created at ${e.createdAt}`}
-                </Timeline.Item>
-              ))}
-            </Timeline>
+            <Card
+              title="List of tasks"
+              extra={
+                <Button type="primary" onClick={() => showModal("", "create")}>
+                  Create task
+                </Button>
+              }>
+              {" "}
+              <Timeline>
+                {tasks.map((e) => (
+                  <div key={e._id}>
+                    <Timeline.Item
+                      dot={
+                        e.completed ? (
+                          <CheckOutlined style={{ color: "green" }} />
+                        ) : (
+                          <ClockCircleOutlined style={{ color: "red" }} />
+                        )
+                      }>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}>
+                        <p>
+                          {`${e.name} was created at ${moment(
+                            new Date(e.createdAt)
+                          ).format("LLLL")} and updated on ${moment(
+                            new Date(e.updatedAt)
+                          ).format("LLLL")}`}{" "}
+                        </p>
+                        <Button
+                          type="dashed"
+                          onClick={() => showModal(e._id, "edit")}>
+                          Edit
+                        </Button>
+                      </div>
+                    </Timeline.Item>
+                  </div>
+                ))}
+              </Timeline>
+            </Card>
 
-            <Button type="primary" onClick={showModal}>
-              Create task
-            </Button>
             <Modal title="Add task" visible={isModalVisible} footer={false}>
               <Form
+                form={form}
                 name="basic"
                 labelCol={{
                   span: 6,
@@ -140,7 +174,7 @@ function Tasks() {
                 wrapperCol={{
                   span: 18,
                 }}
-                onFinish={onFinish}>
+                onFinish={edit ? onFinishEdit : onFinish}>
                 <Form.Item
                   label="Task name"
                   name="name"
@@ -185,7 +219,10 @@ function Tasks() {
                     offset: 6,
                     span: 18,
                   }}>
-                  <Checkbox onChange={(e) => setCompleted(e.target.checked)}>
+                  <Checkbox
+                    // checked={edit && taskById.completed}
+                    ref={checkboxRef}
+                    onChange={(e) => setCompleted(e.target.checked)}>
                     Completed
                   </Checkbox>
                 </Form.Item>
@@ -206,9 +243,7 @@ function Tasks() {
           </div>
         </div>
       </Content>
-      <Footer style={{ textAlign: "center" }}>
-        Ant Design ©2018 Created by Ant UED
-      </Footer>
+      <FooterLayout />
     </Layout>
   );
 }

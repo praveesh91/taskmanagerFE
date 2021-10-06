@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
+import HeaderLayout from "./HeaderLayout";
+import FooterLayout from "./FooterLayout";
 import { useHistory, useLocation } from "react-router-dom";
 
 import customInterceptors from "../api/index";
 
-import { Button, Descriptions, Skeleton, Menu, Layout, message } from "antd";
+import {
+  Button,
+  Descriptions,
+  Skeleton,
+  Menu,
+  Layout,
+  message,
+  Card,
+} from "antd";
 const { Header, Content, Footer } = Layout;
 
 const Profile = () => {
@@ -30,50 +40,12 @@ const Profile = () => {
     return () => {};
   }, []);
 
-  const handleSignout = async () => {
-    try {
-      const res = await customInterceptors.post("/users/logout");
-      message.success("Logged out successfully");
-      localStorage.clear();
-      history.push("/");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <Layout>
-      <Header
-        style={{
-          position: "fixed",
-          zIndex: 1,
-          width: "100%",
-          display: "flex",
-          justifyContent: "space-between",
-        }}>
-        <div>
-          <div className="logo" />
-          <Menu theme="dark" mode="horizontal" selectedKeys={[path]}>
-            <Menu.Item key="profile" onClick={() => history.push("/profile")}>
-              Home
-            </Menu.Item>
-            <Menu.Item key="tasks" onClick={() => history.push("/tasks")}>
-              Tasks
-            </Menu.Item>
-            <Menu.Item key="3">nav 3</Menu.Item>
-          </Menu>
-        </div>
-        <div className="signout">
-          <Menu theme="dark" mode="horizontal">
-            <Menu.Item key="4" onClick={handleSignout}>
-              Signout
-            </Menu.Item>
-          </Menu>
-        </div>
-      </Header>
+      <HeaderLayout />
       <Content
         className="site-layout"
-        style={{ padding: "0 50px", marginTop: 64 }}>
+        style={{ padding: "20px 50px", marginTop: 64 }}>
         <div
           className="site-layout-background"
           style={{ padding: 24, minHeight: 380 }}>
@@ -81,30 +53,32 @@ const Profile = () => {
             className="site-layout-background"
             style={{ padding: 24, minHeight: 380 }}>
             <Skeleton loading={loading}>
-              <Descriptions title="User Info">
-                <Descriptions.Item label="UserName">
-                  {userData?.name}
-                </Descriptions.Item>
-                <Descriptions.Item label="Email">
-                  {userData?.email}
-                </Descriptions.Item>
-                <Descriptions.Item label="Age">
-                  {userData?.age}
-                </Descriptions.Item>
-                <Descriptions.Item label="Created on">
-                  {userData?.createdAt}
-                </Descriptions.Item>
-                <Descriptions.Item label="Updated on">
-                  {userData?.updatedAt}
-                </Descriptions.Item>
-              </Descriptions>
+              <Card
+                title="User Details"
+                extra={<Button type="primary">Edit</Button>}>
+                <Descriptions>
+                  <Descriptions.Item label="Name">
+                    {userData?.name}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Email">
+                    {userData?.email}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Age">
+                    {userData?.age}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Created on">
+                    {userData?.createdAt}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Updated on">
+                    {userData?.updatedAt}
+                  </Descriptions.Item>
+                </Descriptions>
+              </Card>
             </Skeleton>
           </div>
         </div>
       </Content>
-      <Footer style={{ textAlign: "center" }}>
-        Ant Design ©2018 Created by Ant UED
-      </Footer>
+      <FooterLayout />
     </Layout>
   );
 };
