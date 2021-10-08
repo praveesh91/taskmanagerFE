@@ -14,6 +14,7 @@ import {
   Layout,
   message,
   Card,
+  Modal,
 } from "antd";
 const { Header, Content, Footer } = Layout;
 
@@ -25,6 +26,7 @@ const Profile = () => {
 
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(async () => {
     setLoading(true);
@@ -39,6 +41,31 @@ const Profile = () => {
     }
     return () => {};
   }, []);
+
+  const handleUpdateUser = async () => {
+    setLoading(true);
+    try {
+      const res = await customInterceptors.patch("/users/me");
+      setUserData(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   return (
     <Layout>
@@ -55,7 +82,11 @@ const Profile = () => {
             <Skeleton loading={loading}>
               <Card
                 title="User Details"
-                extra={<Button type="primary">Edit</Button>}>
+                extra={
+                  <Button type="primary" onClick={showModal}>
+                    Edit
+                  </Button>
+                }>
                 <Descriptions>
                   <Descriptions.Item label="Name">
                     {userData?.name}
@@ -77,6 +108,15 @@ const Profile = () => {
             </Skeleton>
           </div>
         </div>
+        <Modal
+          title="Edit User Details"
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Modal>
       </Content>
       <FooterLayout />
     </Layout>

@@ -15,7 +15,7 @@ const requestHandler = async (req) => {
 };
 
 const responseHandler = async (res) => {
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     message.error("Unable to authenticate");
   }
   return res;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Layout, Menu, message, Table } from "antd";
+import { Button, Card, Layout, Menu, message, Table } from "antd";
 
 import HeaderLayout from "./HeaderLayout";
 import FooterLayout from "./FooterLayout";
@@ -23,7 +23,23 @@ const columns = [
     dataIndex: "age",
     key: "age",
   },
+  {
+    title: "Action",
+    key: "delete",
+    render(text, record) {
+      console.log({ text });
+      return {
+        children: (
+          <Button onClick={handleDelete} danger>
+            Delete
+          </Button>
+        ),
+      };
+    },
+  },
 ];
+
+const handleDelete = () => {};
 
 const Users = () => {
   const [users, setUsers] = useState([]);

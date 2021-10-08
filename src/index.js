@@ -5,10 +5,11 @@ import "antd/dist/antd.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Spin } from "antd";
+import { ReactComponent as LoaderIcon } from "./assets/loader.svg";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Suspense fallback={<Spin size="large" />}>
+    <Suspense fallback={<LoaderIcon />}>
       <App />
     </Suspense>
   </React.StrictMode>,

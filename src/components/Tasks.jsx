@@ -16,6 +16,7 @@ import {
   message,
   Timeline,
   Layout,
+  Popconfirm,
   Card,
 } from "antd";
 
@@ -33,6 +34,7 @@ function Tasks() {
   const [taskById, setTaskById] = useState();
   const [edit, setEdit] = useState(false);
   const [reload, setReload] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -57,13 +59,15 @@ function Tasks() {
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    setEdit(false);
+    // setEdit(false);
   };
 
   const getTasks = async () => {
+    setLoading(true);
     try {
       const res = await customInterceptors.get("/tasks");
       setTasks(res.data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -86,11 +90,13 @@ function Tasks() {
   };
 
   const onFinish = async (values) => {
+    setLoading(true);
+
     try {
       values.completed = completed;
       const res = await customInterceptors.post("/tasks", values);
       setIsModalVisible(false);
-      setReload(!reload);
+      setLoading(false);
       message.success(res.data);
     } catch (error) {
       message.error("Unable to create the task");
@@ -98,6 +104,8 @@ function Tasks() {
   };
 
   const onFinishEdit = async (values) => {
+    setLoading(true);
+
     try {
       values.completed = completed;
       const res = await customInterceptors.patch(
@@ -106,9 +114,23 @@ function Tasks() {
       );
       setIsModalVisible(false);
       setReload(!reload);
+      setLoading(false);
       message.success("Task updated successfully");
     } catch (error) {
       message.error("Unable to update the task");
+    }
+  };
+
+  const handleDeleteTask = async (id) => {
+    setLoading(true);
+
+    try {
+      const res = await customInterceptors.delete(`/task/${id}`);
+      setReload(!reload);
+      setLoading(false);
+      message.success("Task deleted successfully");
+    } catch (error) {
+      message.error("Unable to delete the task");
     }
   };
   return (
@@ -122,6 +144,7 @@ function Tasks() {
           style={{ padding: 24, minHeight: 380 }}>
           <div>
             <Card
+              loading={loading}
               title="List of tasks"
               extra={
                 <Button type="primary" onClick={() => showModal("", "create")}>
@@ -152,11 +175,21 @@ function Tasks() {
                             new Date(e.updatedAt)
                           ).format("LLLL")}`}{" "}
                         </p>
-                        <Button
-                          type="dashed"
-                          onClick={() => showModal(e._id, "edit")}>
-                          Edit
-                        </Button>
+                        <Space>
+                          <Button
+                            type="dashed"
+                            onClick={() => showModal(e._id, "edit")}>
+                            Edit
+                          </Button>
+                          <Popconfirm
+                            placement="left"
+                            title="Are you sure to delete this task?"
+                            onConfirm={() => handleDeleteTask(e._id)}
+                            okText="Yes"
+                            cancelText="No">
+                            <Button danger>Delete</Button>
+                          </Popconfirm>
+                        </Space>
                       </div>
                     </Timeline.Item>
                   </div>
