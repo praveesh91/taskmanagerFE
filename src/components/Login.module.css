@@ -19,3 +19,6 @@
   justify-content: space-between;
   padding-bottom: 15px;
 }
+:global .ant-upload-list-item {
+  display: none;
+}

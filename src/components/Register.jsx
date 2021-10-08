@@ -11,6 +11,8 @@ import {
   NumberOutlined,
 } from "@ant-design/icons";
 
+const { TextArea } = Input;
+
 const Register = () => {
   const history = useHistory();
 
@@ -75,23 +77,50 @@ const Register = () => {
             placeholder="Email"
           />
         </Form.Item>
-        {/* <Form.Item
-          name="age"
+        <Form.Item
+          name="skills"
           rules={[
             {
-              type: "number",
+              required: true,
+              message: "Please input your skills!",
+            },
+          ]}>
+          <TextArea
+            prefix={<MailOutlined className={styles.siteFormItemIcon} />}
+            type="text"
+            placeholder="Technical skills"
+          />
+        </Form.Item>
+        <Form.Item
+          name="experiance"
+          rules={[
+            {
               min: 0,
               max: 99,
               required: true,
-              message: "Input age between 0 and 99",
+              message: "Input value greater than 0",
             },
           ]}>
-          <InputNumber
+          <Input
             prefix={<NumberOutlined className={styles.siteFormItemIcon} />}
-            type="age"
-            placeholder="Age"
+            type="number"
+            placeholder="Years of experiance"
           />
-        </Form.Item> */}
+        </Form.Item>
+        <Form.Item
+          name="phone"
+          rules={[
+            {
+              required: true,
+              message: "Input valid mobile number ",
+            },
+          ]}>
+          <Input
+            prefix={<NumberOutlined className={styles.siteFormItemIcon} />}
+            type="number"
+            placeholder="09 1234567890"
+          />
+        </Form.Item>
         <div className={styles.forgotSection}>
           <Link to={"/"} style={{ marginLeft: "auto" }}>
             Back to login
