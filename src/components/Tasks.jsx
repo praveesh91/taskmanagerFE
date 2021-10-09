@@ -52,7 +52,7 @@ function Tasks() {
         time: "",
         description: "",
       });
-    action === "create" && (checkboxRef.current.state.checked = false);
+    // action == "create" && checkboxRef?.current?.state?.checked = false;
 
     setIsModalVisible(true);
   };
@@ -97,6 +97,7 @@ function Tasks() {
       const res = await customInterceptors.post("/tasks", values);
       setIsModalVisible(false);
       setLoading(false);
+      setReload(!reload);
       message.success(res.data);
     } catch (error) {
       message.error("Unable to create the task");
@@ -145,7 +146,7 @@ function Tasks() {
           <div>
             <Card
               loading={loading}
-              title="List of tasks"
+              title="Recent tasks"
               extra={
                 <Button type="primary" onClick={() => showModal("", "create")}>
                   Create task

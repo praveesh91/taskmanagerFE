@@ -45,6 +45,9 @@ const HeaderLayout = ({ children }) => {
           <Menu.Item key="users" onClick={() => history.push("/users")}>
             Users
           </Menu.Item>
+          <Menu.Item key="reports" onClick={() => history.push("/reports")}>
+            Report
+          </Menu.Item>
         </Menu>
       </div>
       <div className="signout">

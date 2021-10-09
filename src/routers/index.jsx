@@ -5,6 +5,7 @@ import Register from "../components/Register";
 import Profile from "../components/Profile";
 import Tasks from "../components/Tasks";
 import Users from "../components/Users";
+import Reports from "../components/Reports";
 
 const RouterOutlet = () => {
   return (
@@ -14,6 +15,7 @@ const RouterOutlet = () => {
       <Route path="/profile" component={Profile} />
       <Route path="/tasks" component={Tasks} />
       <Route path="/users" component={Users} />
+      <Route path="/reports" component={Reports} />
     </Switch>
   );
 };

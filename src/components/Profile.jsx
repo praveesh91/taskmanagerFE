@@ -12,6 +12,7 @@ import {
   UserOutlined,
   LockOutlined,
   MailOutlined,
+  DeleteOutlined,
   NumberOutlined,
 } from "@ant-design/icons";
 import {
@@ -103,7 +104,6 @@ const Profile = () => {
         phone: data.phone,
         experiance: data.experiance,
       });
-      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -115,6 +115,16 @@ const Profile = () => {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await customInterceptors.delete(`/users/me/avatar`);
+      message.success("Avatar deleted successfully");
+      setReload(!reload);
+    } catch (error) {
+      message.success("Unable to delete avatar");
+    }
   };
 
   return (
@@ -139,24 +149,36 @@ const Profile = () => {
                       onClick={() => showModal(userData?._id)}>
                       Edit
                     </Button>
-                    <Upload {...props}>
-                      <Button icon={<UploadOutlined />} type="primary">
-                        Upload photo
-                      </Button>
-                    </Upload>
                   </Space>
                 }>
                 <Row>
                   <Col md={6}>
                     {" "}
-                    <Avatar
-                      size={128}
-                      src={`${
-                        userData?.avatar
-                          ? `data:image/png;base64,${userData?.avatar}`
-                          : `https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png`
-                      }`}
-                    />
+                    <div style={{ margin: "30px 0px", textAlign: "center" }}>
+                      <p>
+                        <Avatar
+                          size={100}
+                          icon={!userData?.avatar && <UserOutlined />}
+                          src={`${
+                            userData?.avatar &&
+                            `data:image/png;base64,${userData?.avatar}`
+                          }`}
+                        />
+                      </p>
+                      <Space>
+                        <Upload {...props}>
+                          <Button
+                            type="primary"
+                            shape="circle"
+                            icon={<UploadOutlined />}></Button>
+                        </Upload>
+                        <Button
+                          type="primary"
+                          shape="circle"
+                          onClick={handleDelete}
+                          icon={<DeleteOutlined />}></Button>
+                      </Space>
+                    </div>
                   </Col>
                   <Col md={18}>
                     <Descriptions layout="vertical">
@@ -187,10 +209,14 @@ const Profile = () => {
                           </Text>
                         </Title>
                       </Descriptions.Item>
-                      <Descriptions.Item label="Updated on">
-                        <Text type="warning">
-                          {moment(new Date(userData?.updatedAt)).format("LLLL")}
-                        </Text>
+                      <Descriptions.Item label="Last updated">
+                        <Title level={5}>
+                          <Text type="warning">
+                            {moment(new Date(userData?.updatedAt)).format(
+                              "LLLL"
+                            )}
+                          </Text>
+                        </Title>
                       </Descriptions.Item>
                     </Descriptions>
                   </Col>

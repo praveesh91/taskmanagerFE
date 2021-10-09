@@ -19,9 +19,14 @@ const columns = [
     key: "email",
   },
   {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
+    title: "Contact No.",
+    dataIndex: "phone",
+    key: "phone",
+  },
+  {
+    title: "Experiance",
+    dataIndex: "experiance",
+    key: "experiance",
   },
   {
     title: "Action",
@@ -52,6 +57,7 @@ const Users = () => {
     try {
       const res = await customInterceptors.get("/users");
       setUsers(res.data);
+      console.log(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -61,6 +67,8 @@ const Users = () => {
     name: e.name,
     email: e.email,
     age: e.age,
+    phone: e.phone,
+    experiance: e.experiance,
   }));
   return (
     <Layout>
