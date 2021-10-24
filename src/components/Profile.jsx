@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import HeaderLayout from "./HeaderLayout";
 import FooterLayout from "./FooterLayout";
+import axios from "axios";
 import { useHistory, useLocation } from "react-router-dom";
 import styles from "./Login.module.css";
 
@@ -39,6 +40,9 @@ const { TextArea } = Input;
 const Profile = () => {
   const location = useLocation();
   const [form] = Form.useForm();
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+  console.log({ source });
 
   const [userData, setUserData] = useState();
   const [loading, setLoading] = useState(false);
@@ -49,8 +53,12 @@ const Profile = () => {
     const formData = new FormData();
     formData.append("avatar", file);
     try {
-      await customInterceptors.post("/users/me/avatar", formData);
+      await customInterceptors.post("/users/me/avatar", formData, {
+        cancelToken: source.token,
+      });
+      console.log("object");
       message.success("File uploaded successfully");
+      source.cancel("Operation canceled by the user.");
       setReload(!reload);
     } catch (error) {
       console.log(error);

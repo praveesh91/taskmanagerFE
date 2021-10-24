@@ -3,6 +3,7 @@ import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import localForage from "localforage";
+import customInterceptors from "../api/index";
 
 import styles from "./Login.module.css";
 import { Link } from "react-router-dom";
@@ -12,10 +13,7 @@ const Login = () => {
 
   const onFinish = async (values) => {
     try {
-      const { data } = await axios.post(
-        "http://localhost:3002/users/login",
-        values
-      );
+      const { data } = await customInterceptors.post("/users/login", values);
       localStorage.setItem("tokenId", data.token);
       message.success(data.message);
       history.push("/profile");

@@ -6,6 +6,7 @@ import Profile from "../components/Profile";
 import Tasks from "../components/Tasks";
 import Users from "../components/Users";
 import Reports from "../components/Reports";
+import Attendance from "../components/Attendance";
 
 const RouterOutlet = () => {
   return (
@@ -16,6 +17,7 @@ const RouterOutlet = () => {
       <Route path="/tasks" component={Tasks} />
       <Route path="/users" component={Users} />
       <Route path="/reports" component={Reports} />
+      <Route path="/attendance" component={Attendance} />
     </Switch>
   );
 };

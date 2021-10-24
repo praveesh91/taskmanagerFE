@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "./Login.module.css";
 import { Form, Input, Button, InputNumber, message } from "antd";
 import { useHistory, Link } from "react-router-dom";
+import customInterceptors from "../api/index";
 
 import axios from "axios";
 import {
@@ -18,7 +19,7 @@ const Register = () => {
 
   const onFinish = async (values) => {
     try {
-      const { data } = await axios.post("http://localhost:3002/users", values);
+      const { data } = await customInterceptors.post("/users", values);
       message.success(data);
       history.push("/");
     } catch (error) {
@@ -132,7 +133,7 @@ const Register = () => {
             type="primary"
             htmlType="submit"
             className={styles.loginFormButton}>
-            Log in
+            Register
           </Button>
         </Form.Item>
       </Form>

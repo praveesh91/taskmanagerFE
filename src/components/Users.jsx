@@ -27,12 +27,16 @@ const columns = [
     title: "Experiance",
     dataIndex: "experiance",
     key: "experiance",
+    render(text) {
+      return {
+        children: <span>{`${text} years`}</span>,
+      };
+    },
   },
   {
     title: "Action",
     key: "delete",
     render(text, record) {
-      console.log({ text });
       return {
         children: (
           <Button onClick={handleDelete} danger>

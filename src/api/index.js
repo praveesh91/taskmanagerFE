@@ -4,12 +4,11 @@ import localforage from "localforage";
 import { message } from "antd";
 
 const axiosAPI = axios.create({
-  baseURL: `http://localhost:3002`,
+  baseURL: `http://localhost:3000`,
 });
 
 const requestHandler = async (req) => {
   const token = localStorage.getItem("tokenId");
-  console.log({ token });
   req.headers.Authorization = `Bearer ${token}`;
   return req;
 };

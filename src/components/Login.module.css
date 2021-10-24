@@ -22,3 +22,29 @@
 :global .ant-upload-list-item {
   display: none;
 }
+
+.calendar {
+  border: 1px solid #f0f0f0;
+  border-radius: 2px;
+  overflow-y: scroll;
+  height: 30rem;
+}
+.events {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.events .ant-badge-status {
+  width: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.notesMonth {
+  font-size: 28px;
+  text-align: center;
+}
+.notesMonth section {
+  font-size: 28px;
+}
